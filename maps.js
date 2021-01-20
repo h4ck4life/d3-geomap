@@ -2,8 +2,8 @@
 
 let width = 900;
 let height = 600;
-let zoomCountries = ['CN', 'IN', 'TH', 'MY'];
-//let zoomCountries = ['MY'];
+//let zoomCountries = ['CN', 'IN', 'TH', 'MY'];
+let zoomCountries = ['GI', 'MR'];
 //let zoomCountries = [];
 
 let projection = d3.geoMercator()
