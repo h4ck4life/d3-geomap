@@ -2,8 +2,8 @@
 
 let width = 900;
 let height = 600;
-//let zoomCountries = ['CN', 'IN', 'TH', 'MY'];
-let zoomCountries = ['GI', 'MR'];
+let zoomCountries = ['CN', 'IN', 'TH', 'MY'];
+//let zoomCountries = ['GI', 'MR'];
 //let zoomCountries = [];
 
 let projection = d3.geoMercator()
@@ -88,8 +88,9 @@ d3.json("world.topo.json")
     .then((mapGroupElement) => {
 
         let labelGroup = svg.append("g").attr('id', 'label_group');
+        let labelTextBox = labelGroup.selectAll('g').data(getZoomCountriesMap()).enter().append("g");
 
-        labelGroup.selectAll('g#label_group').data(getZoomCountriesMap()).enter().append('rect')
+        labelTextBox.append('rect')
             .attr("x", function (d) {
                 return getElementCoords(d3.select("path#" + d.properties.iso_3166_1_alpha_2_codes).node()).x;
             })
@@ -98,24 +99,37 @@ d3.json("world.topo.json")
             })
             .attr("width", 40)
             .attr("height", 15)
+            .attr("id", d => d.properties.iso_3166_1_alpha_2_codes)
             .style("fill", "white")
             .style("stroke", "black")
             .style("stroke-width", "0.5px")
             .style("fill-opacity", "0.9")
 
-        labelGroup.selectAll('g#label_group').data(getZoomCountriesMap()).enter().append('text')
+        labelTextBox.append('text')
             .attr("x", function (d) {
-                return getElementCoords(d3.select("path#" + d.properties.iso_3166_1_alpha_2_codes).node()).x + 10;
+                return getElementCoords(d3.select("path#" + d.properties.iso_3166_1_alpha_2_codes).node()).x;
             })
             .attr("y", function (d) {
-                return getElementCoords(d3.select("path#" + d.properties.iso_3166_1_alpha_2_codes).node()).y + 12;
+                return getElementCoords(d3.select("path#" + d.properties.iso_3166_1_alpha_2_codes).node()).y;
             })
+            .attr("id", d => d.properties.iso_3166_1_alpha_2_codes)
             .text(function (d) {
                 return d.properties.name;
             })
             .style("fill", "black")
             .style('font-weight', 'bold')
             .style("font-size", "12px");
+
+        getZoomCountriesMap().forEach(d => {
+            let padding = 5;
+            let rect = d3.select("rect#" + d.properties.iso_3166_1_alpha_2_codes).node();
+            let bbox = d3.select("text#" + d.properties.iso_3166_1_alpha_2_codes).node().getBBox();
+            rect.setAttribute("x", bbox.x - padding)
+            rect.setAttribute("y", bbox.y - padding)
+            rect.setAttribute("width", bbox.width + 2 * padding)
+            rect.setAttribute("height", bbox.height + 2 * padding)
+        })
+
     })
     .catch((error) => {
         console.error(error);
