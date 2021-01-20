@@ -2,8 +2,8 @@
 
 let width = 900;
 let height = 600;
-let zoomCountries = ['CN', 'IN', 'TH'];
-//let zoomCountries = ['MQ'];
+let zoomCountries = ['CN', 'IN', 'TH', 'MY'];
+//let zoomCountries = ['MY'];
 //let zoomCountries = [];
 
 let projection = d3.geoMercator()
@@ -79,8 +79,6 @@ d3.json("world.topo.json")
             //let scale = .9 / Math.max(dx / width, dy / height);
             let translate = [width / 2 - scale * x, height / 2 - scale * y];
 
-            console.log(`scale --> ${scale} | translate --> ${translate}`);
-
             // Render the zoomed map
             svg.select("g").attr("transform", "translate(" + translate + ")scale(" + scale + ")");
 
@@ -89,9 +87,9 @@ d3.json("world.topo.json")
     })
     .then((mapGroupElement) => {
 
-        let labelGroup = svg.data(getZoomCountriesMap()).append("g");
+        let labelGroup = svg.append("g").attr('id', 'label_group');
 
-        labelGroup.append('rect')
+        labelGroup.selectAll('g#label_group').data(getZoomCountriesMap()).enter().append('rect')
             .attr("x", function (d) {
                 return getElementCoords(d3.select("path#" + d.properties.iso_3166_1_alpha_2_codes).node()).x;
             })
@@ -101,11 +99,11 @@ d3.json("world.topo.json")
             .attr("width", 40)
             .attr("height", 15)
             .style("fill", "white")
-            .style("stroke", "white")
+            .style("stroke", "black")
             .style("stroke-width", "0.5px")
-            .style("fill-opacity", "0.8")
+            .style("fill-opacity", "0.9")
 
-        labelGroup.append('text')
+        labelGroup.selectAll('g#label_group').data(getZoomCountriesMap()).enter().append('text')
             .attr("x", function (d) {
                 return getElementCoords(d3.select("path#" + d.properties.iso_3166_1_alpha_2_codes).node()).x + 10;
             })
